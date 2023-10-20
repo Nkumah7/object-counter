@@ -4,6 +4,8 @@ import { CLASSES } from './labels.js'
 
 async function setupWebcam(videoRef) {
     // let allMediaDevices = navigator.mediaDevices
+    // flip button element
+    let flipBtn = document.querySelector('#flip-btn');
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     //     let front = false;
     //         document.getElementById("flip-button").onclick = () => {
@@ -14,9 +16,13 @@ async function setupWebcam(videoRef) {
             // video: {
             //     facingMode: "environment",                
             // },
-            video: true
+            video: {
+                facingMode: "environment",
+            }
         })
 
+        let shouldFaceUser = true;
+        
         // This conditional check is to support older browsers that do not 
         // support the new srcObject configuration. This can likely be        
         // deprecated depending on your support needs.
