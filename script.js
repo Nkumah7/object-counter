@@ -57,7 +57,8 @@ async function setupWebcam(videoRef) {
 
 async function loadModel() {
     await tf.ready();
-    const modelPath = 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v2/1/default/1';
+    // const modelPath = 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v2/1/default/1';
+    const modelPath = 'https://tfhub.dev/tensorflow/tfjs-model/ssdlite_mobilenet_v2/1/default/1'
 
     return await tf.loadGraphModel(modelPath, { fromTFHub: true })
 }
