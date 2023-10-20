@@ -3,12 +3,18 @@ import { CLASSES } from './labels.js'
 /* Activating a Webcam */
 
 async function setupWebcam(videoRef) {
+    // let allMediaDevices = navigator.mediaDevices
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    //     let front = false;
+    //         document.getElementById("flip-button").onclick = () => {
+    //         front = !front;
+    //     };
         const webcamStream = await navigator.mediaDevices.getUserMedia({
             audio: false,
-            video: {
-                facingMode: 'user',
-            },
+            // video: {
+            //     facingMode: "environment",                
+            // },
+            video: true
         })
 
         // This conditional check is to support older browsers that do not 
@@ -35,6 +41,9 @@ async function setupWebcam(videoRef) {
                 detection.height = imgHeight;
                 ctx.font = '16px sans-serif';
                 ctx.textBaseline = 'top';
+                // videoRef.play();
+                // console.log(videoRef.clientHeight)
+                // console.log(imgWidth, imgHeight);
 
                 // The promise resolves with information you’ll need to 
                 // pass along to the detect and draw loop
@@ -75,7 +84,11 @@ async function doStuff() {
 
 async function performDetections(model, videoRef, camDetails) {
     const [ctx, imgHeight, imgWidth] = camDetails;
+    const video = document.getElementById('mystery');
+    video.style.display = 'none';
+    
     const myTensor = tf.browser.fromPixels(videoRef);
+    // console.log(container.clientHeight, container.clientWidth)
 
     // SSD Mobilenet single batch
     // The input is expanded in rank to be a batch of one with 
@@ -135,7 +148,7 @@ async function performDetections(model, videoRef, camDetails) {
         ctx.lineWidth = 4;
 
         // Draw under any existing content.
-        ctx.globalCompositeOperation = 'destination-over';
+        // ctx.globalCompositeOperation = 'source-over';
 
         // Get the highest-scoring index from a previous topk call
         const detectedIndex = maxIndices[detection]
@@ -156,17 +169,26 @@ async function performDetections(model, videoRef, camDetails) {
             predsCount[detectedClass] = 1;
         };        
 
-        // No negative valies for start positions
-        const startY = dBox[0] > 0 ? dBox[0] * imgHeight : 0;
+        // No negative values for start positions
+        // const startY = dBox[0] > 0 ? dBox[0] * imgHeight: 0;
+        // const startX = dBox[1] > 0 ? dBox[1] * imgWidth : 0;
+        // const height = (dBox[2] - dBox[0]) * imgHeight;
+        // const width = (dBox[3] - dBox[1]) * imgWidth;
+        // console.log(startX, startY)
+        // ctx.strokeRect(startX, startY, width, height);
+        ctx.drawImage(videoRef, 0, 0, imgWidth, imgHeight);
+        // console.log(imgHeight);
+        const startY = dBox[0] > 0 ? dBox[0] * imgHeight: 0;
         const startX = dBox[1] > 0 ? dBox[1] * imgWidth : 0;
         const height = (dBox[2] - dBox[0]) * imgHeight;
         const width = (dBox[3] - dBox[1]) * imgWidth;
         ctx.strokeRect(startX, startY, width, height);
+        // console.log(startX, startY, width, height);
         
         // Draw the label background
 
         // Draw over any existing content.
-        ctx.globalCompositeOperation = 'source-over';
+        // ctx.globalCompositeOperation = 'source-over';
         ctx.fillStyle = '#0B0';
         // ctx.font = "16px sans-serif"; // Set the font and size to use on the labels
         ctx.textBaseline = "top"; // Set textBaseline as mentioned
@@ -184,6 +206,7 @@ async function performDetections(model, videoRef, camDetails) {
         // Draw the text last to ensure it's on top
         ctx.fillStyle = '#000000'; // Change the fillStyle to be black for the text render
         ctx.fillText(label, startX, startY); // Draw the text;
+        
 
         // console.log('Tensor Memory Status:', tf.memory().numTensors);        
     });

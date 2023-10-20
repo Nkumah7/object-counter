@@ -5,18 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js" defer></script>
-    <script type="module" src="objectCounting.js" defer></script>
+    <script type="module" src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css">
     <title>Object Counting Demo</title>
 </head>
 
 <body>
-    <h1>Object Counting Demo</h1>
-    <div style="position: relative;">
-        <video id="mystery" width="50%" autoplay></video>
-        <canvas id="detection" style="position: absolute; left: 0"></canvas>
+    <div class="container">
+        <video id="mystery" autoplay="true"></video>
+        <canvas id="detection"></canvas>
+        <!-- <input type="submit" value="Flip" id="flip-button"> -->
     </div>
 
-    <a href="index.html">Back to index</a>
+    <!-- <a href="index.html">Back to index</a> -->
 </body>
 
 </html>
