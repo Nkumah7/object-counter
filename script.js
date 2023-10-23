@@ -1,27 +1,27 @@
 import { CLASSES } from './labels.js'
 
-/* Activating a Webcam */
+const stopBtn = document.getElementById("stopBtn");
+const flipBtn = document.getElementById("flipBtn");
 
+
+/* Activating a Webcam */
+let constraints = {
+    audio: false,
+    video: {
+        facingMode: "user"
+    }
+}
 async function setupWebcam(videoRef) {
     // let allMediaDevices = navigator.mediaDevices
     // flip button element
-    let flipBtn = document.querySelector('#flip-btn');
+
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     //     let front = false;
     //         document.getElementById("flip-button").onclick = () => {
     //         front = !front;
     //     };
-        const webcamStream = await navigator.mediaDevices.getUserMedia({
-            audio: false,
-            // video: {
-            //     facingMode: "environment",                
-            // },
-            video: {
-                facingMode: "environment",
-            }
-        })
-
-        let shouldFaceUser = true;
+        
+        const webcamStream = await navigator.mediaDevices.getUserMedia(constraints)
         
         // This conditional check is to support older browsers that do not 
         // support the new srcObject configuration. This can likely be        
@@ -80,6 +80,22 @@ async function doStuff() {
         // Setting up the webcam should happen only once
         const camDetails = await setupWebcam(mysteryVideo);
 
+        // stopBtn.addEventListener('click', stopWebcam(mysteryVideo));
+
+        let front = true;
+        flipBtn.addEventListener('click', () => {
+            // stopWebcam(mysteryVideo);
+
+            front = !front; // Switch front boolean value
+            constraints.video.facingMode = front ? "user" : "environment"; // Toggle camera facing mode
+            console.log('flipped', constraints.video.facingMode)
+
+            // const video = document.getElementById("mystery");
+            // const camDetails = setupWebcam(mysteryVideo);
+            performDetections(model, mysteryVideo, camDetails);
+    // console.log(camDetails)
+})
+
         // The performDetections method can loop forever when detecting the 
         // content in the webcam and drawing the boxes
         performDetections(model, mysteryVideo, camDetails);
@@ -90,6 +106,8 @@ async function doStuff() {
 }
 
 async function performDetections(model, videoRef, camDetails) {
+    
+    
     const [ctx, imgHeight, imgWidth] = camDetails;
     const video = document.getElementById('mystery');
     video.style.display = 'none';
@@ -224,6 +242,7 @@ async function performDetections(model, videoRef, camDetails) {
         console.log(predClass, count);        
     };
 
+    
     // Loop forever 
     requestAnimationFrame(() => {
         performDetections(model, videoRef, camDetails);
@@ -231,3 +250,29 @@ async function performDetections(model, videoRef, camDetails) {
 };
 
 doStuff();
+
+function stopWebcam (videoRef) {
+    const stream = videoRef.srcObject;
+    let tracks = stream.getTracks();
+    for (let i = 0; i < tracks.length; i++) {
+        let track = tracks[i];
+        track.stop();
+    }
+    videoRef.srcObject = null;
+}
+
+// stopBtn.addEventListener('click', stopWebcam)
+
+// let front = false;
+// flipBtn.addEventListener('click', () => {
+//     stopWebcam();
+
+//     front = !front; // Switch front boolean value
+//     constraints.video.facingMode = front ? "user" : "environment"; // Toggle camera facing mode
+//     console.log('flipped', constraints.video.facingMode)
+
+//     const video = document.getElementById("mystery");
+//     const camDetails = setupWebcam(video);
+//     performDetections(model, video, camDetails);
+//     // console.log(camDetails)
+// })
