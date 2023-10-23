@@ -8,7 +8,7 @@ const flipBtn = document.getElementById("flipBtn");
 let constraints = {
     audio: false,
     video: {
-        facingMode: "user"
+        facingMode: "environment"
     }
 }
 async function setupWebcam(videoRef) {
@@ -83,7 +83,7 @@ async function doStuff() {
         // stopBtn.addEventListener('click', stopWebcam(mysteryVideo));
 
         let front = true;
-        flipBtn.addEventListener('click', () => {
+        flipBtn.addEventListener('click', async () => {
             // stopWebcam(mysteryVideo);
 
             front = !front; // Switch front boolean value
@@ -91,8 +91,8 @@ async function doStuff() {
             console.log('flipped', constraints.video.facingMode)
 
             // const video = document.getElementById("mystery");
-            // const camDetails = setupWebcam(mysteryVideo);
-            performDetections(model, mysteryVideo, camDetails);
+            const flippedCamDetails = await setupWebcam(mysteryVideo);
+            performDetections(model, mysteryVideo, flippedCamDetails);
     // console.log(camDetails)
 })
 
